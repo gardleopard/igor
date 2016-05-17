@@ -74,6 +74,8 @@ class TravisBuildMonitor implements PollingMonitor{
 
     static final int NEW_BUILD_EVENT_THRESHOLD = 1
 
+    static final long BUILD_STARTED_AT_THRESHOLD = 30000L
+
     @SuppressWarnings('GStringExpressionWithinString')
     @Value('${spinnaker.build.pollInterval:60}')
     int pollInterval
@@ -140,7 +142,7 @@ class TravisBuildMonitor implements PollingMonitor{
 
         lastPoll = System.currentTimeMillis()
         def startTime = System.currentTimeMillis()
-        List<Repo> repos = travisService.getReposForAccounts()
+        List<Repo> repos = filterOutOldBuilds(travisService.getReposForAccounts())
         log.info("Took ${System.currentTimeMillis() - startTime}ms to retrieve ${repos.size()} repositories (master: ${master})")
 
         Observable.from(repos).subscribe(
@@ -253,5 +255,12 @@ class TravisBuildMonitor implements PollingMonitor{
 
     private int buildCacheJobTTLSeconds() {
         return TimeUnit.DAYS.toSeconds(cachedJobTTLDays)
+    }
+
+    private List<Repo> filterOutOldBuilds(List<Repo> repos){
+        Long threshold = new Date().getTime() - TimeUnit.DAYS.toMillis(cachedJobTTLDays) + BUILD_STARTED_AT_THRESHOLD
+        return repos.findAll({ repo ->
+            repo.lastBuildStartedAt.getTime() > threshold
+        })
     }
 }
