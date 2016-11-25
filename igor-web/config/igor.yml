@@ -8,6 +8,11 @@ spinnaker:
 
 endpoints.health.sensitive: false
 
+#artifact:
+#  This is a feature toggle for decoration of artifacts.
+#  decorator:
+#    enabled: true
+
 #travis:
 #  enabled: true
 #  Repository sync makes a call to travis telling travis to sync repos against github.

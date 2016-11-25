@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package com.netflix.spinnaker.igor.build.model
+package com.netflix.spinnaker.igor.build.artifact.identifier
 
-class GenericArtifact {
-    String fileName
-    String displayPath
-    String relativePath
-    String reference
-    String name
-    String type
-    String version
+interface ArtifactTypeIdentifier {
 
-    GenericArtifact(String fileName, String displayPath, String relativePath) {
-        this.fileName = fileName
-        this.displayPath = displayPath
-        this.relativePath = relativePath
-    }
+    String artifactType(String reference)
+
 }

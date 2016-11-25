@@ -20,10 +20,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.spinnaker.igor.build.model.GenericBuild
 import com.netflix.spinnaker.igor.jenkins.client.model.JobConfig
 import com.netflix.spinnaker.igor.model.BuildServiceProvider
+import com.netflix.spinnaker.igor.service.ArtifactDecorator
 import com.netflix.spinnaker.igor.service.BuildMasters
 import groovy.transform.InheritConstructors
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PathVariable
@@ -52,6 +54,12 @@ class BuildController {
     @Autowired
     ObjectMapper objectMapper
 
+    @Autowired
+    ArtifactDecorator artifactDecorator
+
+    @Value('${igor.artifact.decorator.enabled:true}')
+    boolean artifactDecoratorEnabled
+
     @RequestMapping(value = '/builds/status/{buildNumber}/{master:.+}/**')
     GenericBuild getJobStatus(@PathVariable String master, @PathVariable Integer buildNumber, HttpServletRequest request) {
         def job = (String) request.getAttribute(
@@ -63,6 +71,11 @@ class BuildController {
             } catch (Exception e) {
                 log.error("could not get scm results for $master / $job / $buildNumber")
             }
+
+            if (artifactDecoratorEnabled) {
+                artifactDecorator.decorate(build)
+            }
+
             return build
         } else {
             throw new MasterNotFoundException("Master '${master}' not found")
