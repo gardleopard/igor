@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package com.netflix.spinnaker.igor.build.model
+package com.netflix.spinnaker.igor.build.artifact.identifier
 
-class GenericArtifact {
-    String fileName
-    String displayPath
-    String relativePath
-    String reference
-    String name
-    String type
-    String version
+class FileArtifactIdentifier implements ArtifactTypeIdentifier {
 
-    GenericArtifact(String fileName, String displayPath, String relativePath) {
-        this.fileName = fileName
-        this.displayPath = displayPath
-        this.relativePath = relativePath
+    @Override
+    String artifactType(String fileName) {
+        List<String> parts = fileName.tokenize('.')
+
+        return parts.last().toLowerCase()
     }
 }

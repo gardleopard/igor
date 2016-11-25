@@ -18,6 +18,8 @@ package com.netflix.spinnaker.igor.config
 
 import com.netflix.hystrix.exception.HystrixRuntimeException
 import com.netflix.spectator.api.Registry
+import com.netflix.spinnaker.igor.build.artifact.identifier.ArtifactTypeIdentifier
+import com.netflix.spinnaker.igor.service.ArtifactDecorator
 import com.netflix.spinnaker.igor.service.BuildMasters
 import com.netflix.spinnaker.kork.web.interceptors.MetricsInterceptor
 import groovy.transform.CompileStatic
@@ -60,6 +62,12 @@ class IgorConfig extends WebMvcConfigurerAdapter {
     BuildMasters buildMasters() {
         log.info "creating buildMaster"
         new BuildMasters()
+    }
+
+    @Bean
+    ArtifactDecorator artifactDecorator() {
+        log.info "creating artifactDecorator"
+        new ArtifactDecorator()
     }
 
     @Bean

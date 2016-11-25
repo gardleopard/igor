@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package com.netflix.spinnaker.igor.build.model
+package com.netflix.spinnaker.igor.build.artifact.decorator
 
-class GenericArtifact {
-    String fileName
-    String displayPath
-    String relativePath
-    String reference
-    String name
-    String type
-    String version
+import com.netflix.spinnaker.igor.build.model.GenericArtifact
 
-    GenericArtifact(String fileName, String displayPath, String relativePath) {
-        this.fileName = fileName
-        this.displayPath = displayPath
-        this.relativePath = relativePath
-    }
+interface ArtifactDetailsDecorator {
+
+    GenericArtifact decorate(GenericArtifact genericArtifact)
+
 }

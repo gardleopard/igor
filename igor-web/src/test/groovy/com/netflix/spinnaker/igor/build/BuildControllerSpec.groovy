@@ -27,6 +27,7 @@ import com.netflix.spinnaker.igor.jenkins.client.model.ParameterDefinition
 import com.netflix.spinnaker.igor.jenkins.client.model.QueuedJob
 import com.netflix.spinnaker.igor.jenkins.service.JenkinsService
 import com.netflix.spinnaker.igor.model.BuildServiceProvider
+import com.netflix.spinnaker.igor.service.ArtifactDecorator
 import com.netflix.spinnaker.igor.service.BuildMasters
 import com.netflix.spinnaker.igor.service.BuildService
 import com.netflix.spinnaker.igor.travis.service.TravisService
@@ -81,7 +82,7 @@ class BuildControllerSpec extends Specification {
         buildMasters = Mock(BuildMasters)
         server = new MockWebServer()
         mockMvc = MockMvcBuilders.standaloneSetup(new BuildController(
-            executor: Executors.newSingleThreadExecutor(), buildMasters: buildMasters, objectMapper: new ObjectMapper())).build()
+            executor: Executors.newSingleThreadExecutor(), buildMasters: buildMasters, objectMapper: new ObjectMapper(), artifactDecorator: new ArtifactDecorator())).build()
     }
 
     void 'get the status of a build'() {
