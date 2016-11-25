@@ -16,6 +16,9 @@
 
 package com.netflix.spinnaker.igor.build.model
 
+import com.fasterxml.jackson.annotation.JsonInclude
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class GenericArtifact {
     String fileName
     String displayPath
