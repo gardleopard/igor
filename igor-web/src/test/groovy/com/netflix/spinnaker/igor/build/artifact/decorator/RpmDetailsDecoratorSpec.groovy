@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Schibsted ASA.
+ * Copyright 2017 Schibsted ASA.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,5 +72,25 @@ class RpmDetailsDecoratorSpec extends Specification {
 
         then:
         genericArtifact.reference == file
+    }
+
+    @Unroll
+    def "identifies RPM packages by reference"() {
+        when:
+        RpmDetailsDecorator rpmDetailsDecorator = new RpmDetailsDecorator()
+        GenericArtifact genericArtifact = new GenericArtifact(reference, reference, reference)
+
+        then:
+        rpmDetailsDecorator.knowsThisArtifact(genericArtifact) == knownArtifact
+
+        where:
+        reference                || knownArtifact
+        "test-artifact-2.13.war" || false
+        "no-extension"           || false
+        "rosco_0.35.0-3_all.deb" || false
+        "test-2.13.deb.true.fal" || false
+        null                     || false
+        ""                       || false
+        "api-411.4-1.x86_64.rpm" || true
     }
 }

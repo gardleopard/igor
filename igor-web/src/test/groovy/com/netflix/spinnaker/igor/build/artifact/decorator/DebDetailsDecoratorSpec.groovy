@@ -68,4 +68,23 @@ class DebDetailsDecoratorSpec extends Specification {
         then:
         genericArtifact.reference == file
     }
+
+    @Unroll
+    def "identifies DEB packages by reference"() {
+        when:
+        DebDetailsDecorator debDetailsDecorator = new DebDetailsDecorator()
+        GenericArtifact genericArtifact = new GenericArtifact(reference, reference, reference)
+
+        then:
+        debDetailsDecorator.knowsThisArtifact(genericArtifact) == knownArtifact
+
+        where:
+        reference                || knownArtifact
+        "test-artifact-2.13.war" || false
+        "no-extension"           || false
+        "rosco_0.35.0-3_all.deb" || true
+        "test-2.13.deb.true.fal" || false
+        null                     || false
+        ""                       || false
+    }
 }

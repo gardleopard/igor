@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Schibsted ASA.
+ * Copyright 2017 Schibsted ASA.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,5 +21,7 @@ import com.netflix.spinnaker.igor.build.model.GenericArtifact
 interface ArtifactDetailsDecorator {
 
     GenericArtifact decorate(GenericArtifact genericArtifact)
+
+    boolean knowsThisArtifact(GenericArtifact genericArtifact)
 
 }

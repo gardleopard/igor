@@ -82,7 +82,7 @@ class BuildControllerSpec extends Specification {
         buildMasters = Mock(BuildMasters)
         server = new MockWebServer()
         mockMvc = MockMvcBuilders.standaloneSetup(new BuildController(
-            executor: Executors.newSingleThreadExecutor(), buildMasters: buildMasters, objectMapper: new ObjectMapper(), artifactDecorator: new ArtifactDecorator())).build()
+            executor: Executors.newSingleThreadExecutor(), buildMasters: buildMasters, objectMapper: new ObjectMapper(), artifactDecorator: null)).build()
     }
 
     void 'get the status of a build'() {

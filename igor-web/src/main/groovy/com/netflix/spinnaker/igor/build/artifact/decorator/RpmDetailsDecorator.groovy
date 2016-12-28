@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Schibsted ASA.
+ * Copyright 2017 Schibsted ASA.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,11 @@
 package com.netflix.spinnaker.igor.build.artifact.decorator
 
 import com.netflix.spinnaker.igor.build.model.GenericArtifact
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty('artifact.decorator.enabled')
 class RpmDetailsDecorator implements ArtifactDetailsDecorator {
 
     String packageType = 'rpm'
@@ -30,6 +34,15 @@ class RpmDetailsDecorator implements ArtifactDetailsDecorator {
         genericArtifact.type = packageType
         genericArtifact.reference = genericArtifact.fileName
         return genericArtifact
+    }
+
+    @Override
+    boolean knowsThisArtifact(GenericArtifact genericArtifact) {
+        //TODO FRAGILE
+        if(!genericArtifact.fileName) {
+            return false
+        }
+        return genericArtifact.fileName.tokenize('.').last() == "rpm"
     }
 
     String extractVersion(String file) {

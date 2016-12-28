@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Schibsted ASA.
+ * Copyright 2017 Schibsted ASA.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,30 @@
 
 package com.netflix.spinnaker.igor.service
 
+import com.netflix.spinnaker.igor.build.artifact.decorator.ArtifactDetailsDecorator
+import com.netflix.spinnaker.igor.build.artifact.decorator.DebDetailsDecorator
+import com.netflix.spinnaker.igor.build.artifact.decorator.RpmDetailsDecorator
 import com.netflix.spinnaker.igor.build.model.GenericArtifact
+import com.netflix.spinnaker.igor.config.ArtifactDecorationProperties
 import spock.lang.Specification
 import spock.lang.Unroll
-
 
 class ArtifactDecoratorSpec extends Specification {
 
     @Unroll
     def "Decorate"() {
         given:
-        ArtifactDecorator artifactDecorator = new ArtifactDecorator()
+        List<ArtifactDetailsDecorator> artifactDetailsDecorators = new ArrayList<>()
+        artifactDetailsDecorators.add (new DebDetailsDecorator())
+        artifactDetailsDecorators.add (new RpmDetailsDecorator())
+        def regex = /([a-zA-Z-]+)\-([\d\.]+)\.([jw]ar)$/
+        ArtifactDecorationProperties.FileDecorator fileDecorator = new ArtifactDecorationProperties.FileDecorator()
+        fileDecorator.type = "java-magic"
+        fileDecorator.identifierRegex = regex
+        fileDecorator.decoratorRegex = regex
+        ArtifactDecorationProperties artifactDecorationProperties = new ArtifactDecorationProperties()
+        artifactDecorationProperties.fileDecorators = [fileDecorator]
+        ArtifactDecorator artifactDecorator = new ArtifactDecorator(artifactDetailsDecorators, artifactDecorationProperties)
 
         when:
         GenericArtifact genericArtifact = new GenericArtifact(reference, reference, reference)
@@ -41,6 +54,11 @@ class ArtifactDecoratorSpec extends Specification {
         reference || name || version || type
         "openmotif22-libs-2.2.4-192.1.3.x86_64.rpm" || "openmotif22-libs" || "2.2.4" || "rpm"
         "api_1.1.1-h01.sha123_all.deb" || "api"  || "1.1.1-h01.sha123" || "deb"
+        "test-2.13.jar" || "test" || "2.13"  || "jar"
+        "wara-2.13.war" || "wara" || "2.13"  || "war"
         "unknown-3.2.1.apk" || null || null || null
+        null || null || null || null
     }
+
+    //TODO add test for overriding the deb or rpm batteries included parser
 }

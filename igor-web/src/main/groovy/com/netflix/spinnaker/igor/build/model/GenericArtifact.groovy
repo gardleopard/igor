@@ -33,4 +33,32 @@ class GenericArtifact {
         this.displayPath = displayPath
         this.relativePath = relativePath
     }
+
+    String toString() {
+        StringBuilder sb = new StringBuilder()
+        if (fileName) {
+            sb.append("fileName: ${fileName}")
+        }
+        if (displayPath) {
+            sb.append("displayPath: ${displayPath}")
+        }
+        if (relativePath) {
+            sb.append("relativePath: ${relativePath}")
+        }
+        if (reference) {
+            sb.append("reference: ${reference}")
+        }
+        if (name) {
+            sb.append("name: ${name}")
+        }
+        if (type) {
+            sb.append("type: ${type}")
+        }
+        if (version) {
+            sb.append("versino: ${version}")
+        }
+
+        return sb.tokenize().join(",")
+
+    }
 }

@@ -57,9 +57,6 @@ class BuildController {
     @Autowired
     ArtifactDecorator artifactDecorator
 
-    @Value('${igor.artifact.decorator.enabled:true}')
-    boolean artifactDecoratorEnabled
-
     @RequestMapping(value = '/builds/status/{buildNumber}/{master:.+}/**')
     GenericBuild getJobStatus(@PathVariable String master, @PathVariable Integer buildNumber, HttpServletRequest request) {
         def job = (String) request.getAttribute(
@@ -72,7 +69,7 @@ class BuildController {
                 log.error("could not get scm results for $master / $job / $buildNumber")
             }
 
-            if (artifactDecoratorEnabled) {
+            if (artifactDecorator) {
                 artifactDecorator.decorate(build)
             }
 

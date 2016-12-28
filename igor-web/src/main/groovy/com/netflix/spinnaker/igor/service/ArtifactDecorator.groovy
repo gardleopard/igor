@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Schibsted ASA.
+ * Copyright 2017 Schibsted ASA.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,46 @@
 package com.netflix.spinnaker.igor.service
 
 import com.netflix.spinnaker.igor.build.artifact.decorator.ArtifactDetailsDecorator
-import com.netflix.spinnaker.igor.build.artifact.decorator.DebDetailsDecorator
-import com.netflix.spinnaker.igor.build.artifact.decorator.RpmDetailsDecorator
-import com.netflix.spinnaker.igor.build.artifact.identifier.ArtifactTypeIdentifier
-import com.netflix.spinnaker.igor.build.artifact.identifier.FileArtifactIdentifier
+import com.netflix.spinnaker.igor.build.artifact.decorator.ConfigurableFileDecorator
 import com.netflix.spinnaker.igor.build.model.GenericArtifact
 import com.netflix.spinnaker.igor.build.model.GenericBuild
+import com.netflix.spinnaker.igor.config.ArtifactDecorationProperties
+import groovy.util.logging.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+import javax.validation.Valid
+
+@Slf4j
+@Component
+@ConditionalOnProperty('artifact.decorator.enabled')
 class ArtifactDecorator {
 
-    Map<String, ArtifactDetailsDecorator> artifactDetailsDecorators = new HashMap<String, ArtifactDetailsDecorator>()
-    List<ArtifactTypeIdentifier> artifactTypeIdentifiers = new ArrayList<ArtifactTypeIdentifier>()
+    List<ArtifactDetailsDecorator> artifactDetailsDecorators;
 
-    ArtifactDecorator() {
-        artifactDetailsDecorators.put("rpm", new RpmDetailsDecorator())
-        artifactDetailsDecorators.put("deb", new DebDetailsDecorator())
-        artifactTypeIdentifiers.add(new FileArtifactIdentifier())
+    @Autowired(required = false)
+    ArtifactDecorationProperties artifactDecorationProperties
+
+    @Autowired
+    ArtifactDecorator(List<ArtifactDetailsDecorator> artifactDetailsDecorators, @Valid ArtifactDecorationProperties artifactDecorationProperties) {
+        this.artifactDetailsDecorators = artifactDetailsDecorators
+        List<ArtifactDetailsDecorator> configuredArtifactDetailsDecorators = artifactDecorationProperties?.fileDecorators?.collect { ArtifactDecorationProperties.FileDecorator fileDecorator ->
+            log.error "Configuring type : ${fileDecorator.type}"
+            (ArtifactDetailsDecorator) new ConfigurableFileDecorator(fileDecorator.type, fileDecorator.decoratorRegex, fileDecorator.identifierRegex)
+        }
+        if (configuredArtifactDetailsDecorators) {
+            this.artifactDetailsDecorators.addAll(0, configuredArtifactDetailsDecorators)
+        }
+        this.artifactDetailsDecorators
     }
 
     void decorate(GenericArtifact genericArtifact) {
-        String type = getType(genericArtifact.fileName)
-        ArtifactDetailsDecorator artifactDetailsDecorator = artifactDetailsDecorators.get(type)
-        if(artifactDetailsDecorator) {
-            artifactDetailsDecorator.decorate(genericArtifact)
-
+        for (ArtifactDetailsDecorator artifactDetailsDecorator : artifactDetailsDecorators) {
+            if (artifactDetailsDecorator.knowsThisArtifact(genericArtifact)) {
+                artifactDetailsDecorator.decorate(genericArtifact)
+                break
+            }
         }
     }
 
@@ -48,15 +64,5 @@ class ArtifactDecorator {
         genericBuild.artifacts?.each {
             decorate(it)
         }
-    }
-
-    String getType( String reference ) {
-        for(ArtifactTypeIdentifier identifier: artifactTypeIdentifiers) {
-            String artifactType = identifier.artifactType(reference)
-            if(artifactType) {
-                return artifactType
-            }
-        }
-        return ""
     }
 }

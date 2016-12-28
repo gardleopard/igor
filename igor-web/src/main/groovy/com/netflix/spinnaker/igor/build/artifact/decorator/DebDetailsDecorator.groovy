@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Schibsted ASA.
+ * Copyright 2017 Schibsted ASA.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,13 @@
 package com.netflix.spinnaker.igor.build.artifact.decorator
 
 import com.netflix.spinnaker.igor.build.model.GenericArtifact
+import groovy.util.logging.Slf4j
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Slf4j
+@Component
+@ConditionalOnProperty('artifact.decorator.enabled')
 class DebDetailsDecorator implements ArtifactDetailsDecorator {
 
     String packageType = "deb"
@@ -30,6 +36,14 @@ class DebDetailsDecorator implements ArtifactDetailsDecorator {
         genericArtifact.type = packageType
         genericArtifact.reference = genericArtifact.fileName
         return genericArtifact
+    }
+
+    @Override
+    boolean knowsThisArtifact(GenericArtifact genericArtifact) {
+        if(!genericArtifact.fileName) {
+            return false
+        }
+        return genericArtifact.fileName.tokenize('.').last() == "deb"
     }
 
     String extractVersion(String file) {
