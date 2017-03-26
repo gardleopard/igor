@@ -42,7 +42,7 @@ class ArtifactDecorator {
     ArtifactDecorator(List<ArtifactDetailsDecorator> artifactDetailsDecorators, @Valid ArtifactDecorationProperties artifactDecorationProperties) {
         this.artifactDetailsDecorators = artifactDetailsDecorators
         List<ArtifactDetailsDecorator> configuredArtifactDetailsDecorators = artifactDecorationProperties?.fileDecorators?.collect { ArtifactDecorationProperties.FileDecorator fileDecorator ->
-            log.error "Configuring type : ${fileDecorator.type}"
+            log.info "Configuring custom artifact decorator of type : ${fileDecorator.type}"
             (ArtifactDetailsDecorator) new ConfigurableFileDecorator(fileDecorator.type, fileDecorator.decoratorRegex, fileDecorator.identifierRegex)
         }
         if (configuredArtifactDetailsDecorators) {

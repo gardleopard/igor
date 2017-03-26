@@ -38,7 +38,6 @@ class RpmDetailsDecorator implements ArtifactDetailsDecorator {
 
     @Override
     boolean knowsThisArtifact(GenericArtifact genericArtifact) {
-        //TODO FRAGILE
         if(!genericArtifact.fileName) {
             return false
         }
