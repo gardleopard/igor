@@ -17,9 +17,7 @@
 package com.netflix.spinnaker.igor.build.artifact.decorator
 
 import com.netflix.spinnaker.igor.build.model.GenericArtifact
-import groovy.util.logging.Slf4j
 
-@Slf4j
 class ConfigurableFileDecorator implements ArtifactDetailsDecorator {
 
     String decoratorRegex
@@ -40,7 +38,6 @@ class ConfigurableFileDecorator implements ArtifactDetailsDecorator {
             genericArtifact.name = m.group(1)
             genericArtifact.version = m.group(2)
             genericArtifact.type = m.groupCount() > 2 ? m.group(3) : type
-            log.debug "Found artifact: ${genericArtifact.toString()}"
         }
         return genericArtifact
     }

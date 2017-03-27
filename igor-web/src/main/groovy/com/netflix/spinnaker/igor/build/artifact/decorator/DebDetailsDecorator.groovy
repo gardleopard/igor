@@ -17,11 +17,9 @@
 package com.netflix.spinnaker.igor.build.artifact.decorator
 
 import com.netflix.spinnaker.igor.build.model.GenericArtifact
-import groovy.util.logging.Slf4j
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
-@Slf4j
 @Component
 @ConditionalOnProperty('artifact.decorator.enabled')
 class DebDetailsDecorator implements ArtifactDetailsDecorator {

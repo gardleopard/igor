@@ -55,6 +55,7 @@ class ArtifactDecorator {
         for (ArtifactDetailsDecorator artifactDetailsDecorator : artifactDetailsDecorators) {
             if (artifactDetailsDecorator.knowsThisArtifact(genericArtifact)) {
                 artifactDetailsDecorator.decorate(genericArtifact)
+                log.debug "Decorated artifact: ${genericArtifact.toString()}"
                 break
             }
         }
