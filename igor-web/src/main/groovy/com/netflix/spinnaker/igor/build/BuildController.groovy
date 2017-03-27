@@ -54,7 +54,7 @@ class BuildController {
     @Autowired
     ObjectMapper objectMapper
 
-    @Autowired
+    @Autowired(required = false)
     ArtifactDecorator artifactDecorator
 
     @RequestMapping(value = '/builds/status/{buildNumber}/{master:.+}/**')
