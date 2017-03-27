@@ -20,9 +20,9 @@ import com.netflix.spinnaker.igor.build.model.GenericArtifact
 
 class ConfigurableFileDecorator implements ArtifactDetailsDecorator {
 
-    String decoratorRegex
-    String identifierRegex
-    String type
+    final String decoratorRegex
+    final String identifierRegex
+    final String type
 
     ConfigurableFileDecorator(String type, String decoratorRegex, String identifierRegex) {
         this.decoratorRegex = decoratorRegex
