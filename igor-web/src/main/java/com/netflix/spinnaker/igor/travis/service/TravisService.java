@@ -57,15 +57,7 @@ import retrofit.mime.TypedByteArray;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -139,6 +131,14 @@ public class TravisService implements BuildService {
         }
 
         return travisCache.setQueuedJob(groupKey, triggerResponse.getRequest().getRepository().getId(), triggerResponse.getRequest().getId());
+    }
+
+    @java.lang.Override
+    public Map<String, String> getDetails() {
+        Map details = new HashMap<String, String>();
+        details.put("type", buildServiceProvider().toString().toLowerCase());
+        details.put("name", groupKey);
+        return details;
     }
 
     public List<Build> getBuilds() {

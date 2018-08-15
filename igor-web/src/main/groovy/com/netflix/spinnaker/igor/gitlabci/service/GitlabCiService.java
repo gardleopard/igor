@@ -25,6 +25,7 @@ import com.netflix.spinnaker.igor.model.BuildServiceProvider;
 import com.netflix.spinnaker.igor.service.BuildService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,6 +61,14 @@ public class GitlabCiService implements BuildService {
     @Override
     public int triggerBuildWithParameters(String job, Map<String, String> queryParameters) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<String, String> getDetails() {
+        Map details = new HashMap<String, String>();
+        details.put("type", buildServiceProvider().toString().toLowerCase());
+        details.put("name", "gitlabci");
+        return details;
     }
 
     public List<Project> getProjects() {

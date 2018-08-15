@@ -136,6 +136,14 @@ class JenkinsService implements BuildService{
         return queuedLocation.split('/')[-1].toInteger()
     }
 
+    @Override
+    Map<String, String> getDetails() {
+        Map details = new HashMap<String, String>()
+        details.put("type",  buildServiceProvider().toString().toLowerCase())
+        details.put("name", groupKey)
+        return details
+    }
+
     ScmDetails getGitDetails(String jobName, Integer buildNumber) {
         retrySupport.retry({
             new SimpleHystrixCommand<ScmDetails>(

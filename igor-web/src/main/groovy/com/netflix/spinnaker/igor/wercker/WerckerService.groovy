@@ -183,7 +183,14 @@ class WerckerService implements BuildService {
         }
     }
 
-    /**
+    @Override
+    Map<String, String> getDetails() {
+        Map details = new HashMap<String, String>()
+        details.put("type", buildServiceProvider().toString().toLowerCase())
+        details.put("name", groupKey)
+        return details
+    }
+/**
      * Returns List of all Wercker jobs in the format of type/org/app/pipeline
      */
     List<String> getJobs() {

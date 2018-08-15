@@ -61,17 +61,14 @@ class InfoController {
     @RequestMapping(value = '/masters', method = RequestMethod.GET)
     List<Object> listMasters(
         @RequestParam(value = "showUrl", defaultValue = "false") String showUrl,
+        @RequestParam(value = "details", defaultValue = "false") String details,
         @RequestParam(value = "type", defaultValue = "") String type) {
 
         BuildServiceProvider providerType = (type == "") ? null :
             BuildServiceProvider.valueOf(type.toUpperCase())
 
-        if (showUrl == 'true') {
-            List<Object> masterList = []
-            addMaster(masterList, providerType, jenkinsProperties,  BuildServiceProvider.JENKINS)
-            addMaster(masterList, providerType, travisProperties,   BuildServiceProvider.TRAVIS)
-            addMaster(masterList, providerType, gitlabCiProperties, BuildServiceProvider.GITLAB_CI)
-            addMaster(masterList, providerType, werckerProperties,  BuildServiceProvider.WERCKER)
+        if (showUrl == 'true' || details == 'true') {
+            List<Object> masterList = getMasterDetails(providerType)
             return masterList
         } else {
             //Filter by provider type if it is specified
@@ -84,17 +81,18 @@ class InfoController {
         }
     }
     
-    void addMaster(masterList, providerType, properties, expctedType) {
-        if (!providerType || providerType == expctedType) {
-            masterList.addAll(
-                properties?.masters.collect {
-                    [
-                        "name"         : it.name,
-                        "address"      : it.address
-                    ]
+    List<Object> getMasterDetails(expectedType) {
+        List<Object> details = []
+        buildMasters.map.each {
+            if (!expectedType) {
+                details.add(it.value.getDetails())
+            } else {
+                if (it.value.buildServiceProvider() == expectedType) {
+                    details.add(it.value.getDetails())
                 }
-            )
+            }
         }
+        return details
     }
 
     @RequestMapping(value = '/jobs/{master:.+}', method = RequestMethod.GET)
